@@ -1,6 +1,46 @@
 {
   "free": {},
-  "pro": {},
+  "pro": {
+    "151.0.7922.108.3": {
+      "darwin-arm64": {
+        "asset": "cloakbrowser-darwin-arm64.tar.gz",
+        "mirrored_at": 1790317754,
+        "sha256": "1b7f4e3926b7bcbae2469b98019cd4c0127f29ffe0291acf6467610e7933e83e",
+        "size": 162655214,
+        "tag": "chromium-v151.0.7922.108.3-pro"
+      },
+      "darwin-x64": {
+        "asset": "cloakbrowser-darwin-x64.tar.gz",
+        "mirrored_at": 1790317765,
+        "sha256": "987ddc2a5dc7fb8973544eae0e60a54bf1ab3a26c0ff3fadb02729cf0aa88155",
+        "size": 176917233,
+        "tag": "chromium-v151.0.7922.108.3-pro"
+      }
+    },
+    "152.0.7977.82.1": {
+      "linux-arm64": {
+        "asset": "cloakbrowser-linux-arm64.tar.gz",
+        "mirrored_at": 1790317717,
+        "sha256": "888e42c998b60092c6784c35294fac917af7648fc333ece6cba47e4c237e2ec1",
+        "size": 224149450,
+        "tag": "chromium-v152.0.7977.82.1-pro"
+      },
+      "linux-x64": {
+        "asset": "cloakbrowser-linux-x64.tar.gz",
+        "mirrored_at": 1790317706,
+        "sha256": "4fe4ee3c4c014a42c164607ee7730dc68cc84a21c5673f54d3d81a0597b0742a",
+        "size": 234517012,
+        "tag": "chromium-v152.0.7977.82.1-pro"
+      },
+      "windows-x64": {
+        "asset": "cloakbrowser-windows-x64.zip",
+        "mirrored_at": 1790317744,
+        "sha256": "3f94622cb8911b3c678f7bbba0f5fe815a94c7d4fd83c474b9469a399b120a37",
+        "size": 519052630,
+        "tag": "chromium-v152.0.7977.82.1-pro"
+      }
+    }
+  },
   "seen": [
     "free:142.0.7444.175",
     "free:145.0.7632.109",
@@ -31,6 +71,40 @@
     "pro:151.0.7922.108.6",
     "pro:152.0.7977.82.1"
   ],
-  "skipped": [],
-  "updated_at": 1790317513
+  "skipped": [
+    {
+      "kind": "pro",
+      "platform": "darwin-arm64",
+      "reason": "not_in_manifest",
+      "version": "152.0.7977.82.1"
+    },
+    {
+      "kind": "pro",
+      "platform": "darwin-x64",
+      "reason": "not_in_manifest",
+      "version": "152.0.7977.82.1"
+    },
+    {
+      "kind": "pro",
+      "platform": "linux-x64",
+      "reason": "pinned_requires_paid_key",
+      "served": "152.0.7977.82.1",
+      "version": "151.0.7922.108.3"
+    },
+    {
+      "kind": "pro",
+      "platform": "linux-arm64",
+      "reason": "pinned_requires_paid_key",
+      "served": "152.0.7977.82.1",
+      "version": "151.0.7922.108.3"
+    },
+    {
+      "kind": "pro",
+      "platform": "windows-x64",
+      "reason": "pinned_requires_paid_key",
+      "served": "152.0.7977.82.1",
+      "version": "151.0.7922.108.3"
+    }
+  ],
+  "updated_at": 1790317765
 }
