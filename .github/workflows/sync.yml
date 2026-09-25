@@ -1,0 +1,131 @@
+name: sync-upstream-releases
+
+# Hourly cheap check (GitHub API only, no key).  When upstream publishes a new
+# release, the download job runs and uses the license key to fetch + verify +
+# publish the binaries as release assets in this repository.
+
+on:
+  schedule:
+    - cron: "17 * * * *"          # hourly at :17 (UTC)
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: "comma list (default: all)"
+        default: ""
+      kinds:
+        description: "pro,free (default: both)"
+        default: "pro,free"
+      limit:
+        description: "max downloads per run"
+        default: "20"
+      force:
+        description: "re-download already mirrored items"
+        type: boolean
+        default: false
+      seed:
+        description: "baseline only: mark current upstream versions as seen (no download)"
+        type: boolean
+        default: false
+      versions:
+        description: "explicit comma list (backfill/specific versions)"
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      has_new: ${{ steps.check.outputs.has_new }}
+      versions: ${{ steps.check.outputs.versions }}
+      kinds: ${{ steps.check.outputs.kinds }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet httpx cryptography
+
+      - name: Baseline (seed)
+        if: ${{ github.event.inputs.seed == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/sync_releases.py --seed --state state/downloaded.json
+
+      - name: Check upstream for new releases
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IN_PLATFORMS: ${{ github.event.inputs.platforms }}
+          IN_KINDS: ${{ github.event.inputs.kinds }}
+          IN_VERSIONS: ${{ github.event.inputs.versions }}
+        run: |
+          if [ -n "${{ github.event.inputs.versions }}" ]; then
+            # explicit backfill request: treat those versions as the plan
+            echo "has_new=true" >> "$GITHUB_OUTPUT"
+            echo "versions=${{ github.event.inputs.versions }}" >> "$GITHUB_OUTPUT"
+            echo "kinds=${IN_KINDS:-pro,free}" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          args=(--check --state state/downloaded.json --kinds "${IN_KINDS:-pro,free}")
+          [ -n "$IN_PLATFORMS" ] && args+=(--platforms "$IN_PLATFORMS")
+          python scripts/sync_releases.py "${args[@]}"
+
+      - name: Commit state (baseline)
+        if: ${{ github.event.inputs.seed == 'true' }}
+        run: |
+          if ! git diff --quiet -- state; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add state/downloaded.json
+            git commit -m "state: seed baseline [skip ci]"
+            git push
+          fi
+
+  download:
+    needs: check
+    if: ${{ needs.check.outputs.has_new == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      # provided as an Actions secret; never committed to the repository
+      CLOAKBROWSER_LICENSE_KEY: ${{ secrets.CLOAKBROWSER_LICENSE_KEY }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+      VERSIONS: ${{ needs.check.outputs.versions }}
+      KINDS: ${{ needs.check.outputs.kinds }}
+      PLATFORMS: ${{ github.event.inputs.platforms }}
+      LIMIT: ${{ github.event.inputs.limit }}
+      FORCE: ${{ github.event.inputs.force }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet httpx cryptography
+
+      - name: Download + verify + publish
+        run: |
+          args=(--state state/downloaded.json --workdir work --publish
+                --kinds "${KINDS:-pro,free}" --limit "${LIMIT:-20}")
+          [ -n "$VERSIONS" ] && args+=(--versions "$VERSIONS")
+          [ -n "$PLATFORMS" ] && args+=(--platforms "$PLATFORMS")
+          [ "$FORCE" = "true" ] && args+=(--force)
+          python scripts/sync_releases.py "${args[@]}"
+
+      - name: Commit state
+        run: |
+          if ! git diff --quiet -- state; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add state/downloaded.json
+            git commit -m "state: new releases mirrored [skip ci]"
+            git push
+          else
+            echo "state unchanged"
+          fi
