@@ -39,6 +39,43 @@
         "size": 519052630,
         "tag": "chromium-v152.0.7977.82.1-pro"
       }
+    },
+    "154.0.8037.57.1": {
+      "darwin-arm64": {
+        "asset": "cloakbrowser-darwin-arm64.tar.gz",
+        "mirrored_at": 1791322800,
+        "sha256": "08526e46462ef0b23aa0deb2e97fe320aa1e9b66dd70fff18a8424b80b5e4073",
+        "size": 168918096,
+        "tag": "chromium-v154.0.8037.57.1-pro"
+      },
+      "darwin-x64": {
+        "asset": "cloakbrowser-darwin-x64.tar.gz",
+        "mirrored_at": 1791322816,
+        "sha256": "90cafc5ba8bc295117d8bcd02036d30aa874bd5309e3fa2864f01cc15f7eacca",
+        "size": 184814950,
+        "tag": "chromium-v154.0.8037.57.1-pro"
+      },
+      "linux-arm64": {
+        "asset": "cloakbrowser-linux-arm64.tar.gz",
+        "mirrored_at": 1791322844,
+        "sha256": "d0f7b19816869297bff25527d25a7bb08b3bfec98ddeaed52912cd693d7236fb",
+        "size": 228356550,
+        "tag": "chromium-v154.0.8037.57.1-pro"
+      },
+      "linux-x64": {
+        "asset": "cloakbrowser-linux-x64.tar.gz",
+        "mirrored_at": 1791322830,
+        "sha256": "0d31b5113ce4a3dab8edd2278e69472cde70ff90d841c73fa065c073c8b46a1b",
+        "size": 239083300,
+        "tag": "chromium-v154.0.8037.57.1-pro"
+      },
+      "windows-x64": {
+        "asset": "cloakbrowser-windows-x64.zip",
+        "mirrored_at": 1791322866,
+        "sha256": "dd855c7325cd7a348e45c3638102b72325d7f9907bcdb5c7075274bcb2205321",
+        "size": 533895806,
+        "tag": "chromium-v154.0.8037.57.1-pro"
+      }
     }
   },
   "seen": [
@@ -69,7 +106,8 @@
     "pro:151.0.7922.108.3",
     "pro:151.0.7922.108.4",
     "pro:151.0.7922.108.6",
-    "pro:152.0.7977.82.1"
+    "pro:152.0.7977.82.1",
+    "pro:154.0.8037.57.1"
   ],
   "skipped": [
     {
@@ -106,5 +144,5 @@
       "version": "151.0.7922.108.3"
     }
   ],
-  "updated_at": 1791306791
+  "updated_at": 1791322866
 }
